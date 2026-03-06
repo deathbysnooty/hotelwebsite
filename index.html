@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siamton Inn — Kolkata · City of Joy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:      #12305B;
+      --navy-deep: #0a1e3a;
+      --gold:      #C19A12;
+      --gold-warm: #F5BB42;
+      --ivory:     #F7F2EA;
+      --charcoal:  #2c2c2c;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--ivory);
+      color: var(--charcoal);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 64px;
+      transition: background 0.5s ease, padding 0.4s ease, box-shadow 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(10, 30, 58, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 16px 64px;
+      box-shadow: 0 1px 40px rgba(0,0,0,0.3);
+    }
+    .nav-logo img {
+      height: 52px;
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold-warm); }
+
+    /* ── HERO ────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 680px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('brand_assets/image.png') center 35% / cover no-repeat;
+      transform: scale(1.06);
+      transition: transform 10s ease;
+    }
+    .hero.loaded .hero-bg { transform: scale(1); }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10, 30, 58, 0.55) 0%,
+        rgba(10, 30, 58, 0.35) 40%,
+        rgba(10, 30, 58, 0.72) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      text-align: center;
+      color: #fff;
+      padding: 0 24px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-bottom: 22px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: up 1s ease 0.4s forwards;
+    }
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3.2rem, 8vw, 7rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: up 1s ease 0.7s forwards;
+    }
+    .hero-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--gold-warm);
+      margin: 32px auto;
+      opacity: 0;
+      animation: fadein 1s ease 1.1s forwards;
+    }
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255,255,255,0.8);
+      opacity: 0;
+      transform: translateY(16px);
+      animation: up 1s ease 1.1s forwards;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      animation: fadein 1s ease 2s forwards;
+    }
+    .hero-scroll span {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+      animation: pulse 2.2s ease infinite 2.2s;
+    }
+
+    @keyframes up    { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadein { to { opacity: 1; } }
+    @keyframes pulse  { 0%,100% { opacity: 0.5; } 50% { opacity: 0.15; } }
+
+    /* ── ABOUT ───────────────────────────────────────── */
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 88vh;
+    }
+    .about-img {
+      position: relative;
+      overflow: hidden;
+    }
+    .about-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 9s ease;
+    }
+    .about-img:hover img { transform: scale(1.04); }
+    .about-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(10,30,58,0.12), transparent 60%);
+    }
+    .about-copy {
+      background: var(--navy);
+      padding: 100px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.9rem, 3.5vw, 3rem);
+      font-weight: 400;
+      letter-spacing: 2px;
+      line-height: 1.2;
+    }
+    .gold-rule {
+      width: 48px;
+      height: 1px;
+      background: var(--gold);
+      margin: 28px 0;
+    }
+    .gold-rule.center { margin: 24px auto; }
+    .body-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.12rem;
+      line-height: 1.95;
+    }
+    .about-copy .section-title { color: #fff; }
+    .about-copy .body-text     { color: rgba(255,255,255,0.72); }
+    .about-stats {
+      display: flex;
+      gap: 52px;
+      margin-top: 44px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-num {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      color: var(--gold-warm);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 6px;
+    }
+
+    /* ── ROOMS ───────────────────────────────────────── */
+    .rooms {
+      background: #0d2248;
+      padding: 120px 64px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+    .section-header .section-title { color: #fff; }
+    .section-header .eyebrow { display: block; }
+    .section-header .body-text {
+      color: rgba(255,255,255,0.55);
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      grid-template-rows: 310px 310px;
+      gap: 4px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+    .room-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .room-card.tall { grid-row: 1 / 3; }
+    .room-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+      display: block;
+    }
+    .room-card:hover img { transform: scale(1.07); }
+    .room-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(8,22,50,0.88) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .room-card:hover .room-card-overlay { opacity: 1; }
+    .room-card-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+    .room-card:hover .room-card-info { opacity: 1; transform: translateY(0); }
+    .room-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: 1.5px;
+    }
+    .room-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 6px;
+    }
+
+    /* ── AMENITIES ───────────────────────────────────── */
+    .amenities {
+      background: var(--ivory);
+      padding: 120px 64px 80px;
+    }
+    .amenities .section-header .section-title { color: var(--navy); }
+    .amenities .section-header .body-text { color: #777; }
+    .amenity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      max-width: 1240px;
+      margin: 0 auto 80px;
+    }
+    .amenity-card {
+      position: relative;
+      height: 520px;
+      overflow: hidden;
+    }
+    .amenity-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+      filter: brightness(0.82);
+    }
+    .amenity-card:hover img { transform: scale(1.05); filter: brightness(0.68); }
+    .amenity-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,30,58,0.9) 0%, rgba(10,30,58,0.1) 55%);
+    }
+    .amenity-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 48px 44px;
+    }
+    .amenity-line {
+      width: 36px;
+      height: 1px;
+      background: var(--gold-warm);
+      margin-bottom: 18px;
+    }
+    .amenity-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.45rem;
+      letter-spacing: 2px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .amenity-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.72);
+      max-width: 320px;
+    }
+
+    /* ── FEATURES BAR ────────────────────────────────── */
+    .features-bar {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid rgba(18,48,91,0.12);
+    }
+    .feat {
+      padding: 42px 30px;
+      text-align: center;
+      border-right: 1px solid rgba(18,48,91,0.12);
+      transition: background 0.3s;
+    }
+    .feat:last-child { border-right: none; }
+    .feat:hover { background: rgba(18,48,91,0.04); }
+    .feat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin: 0 auto 18px;
+    }
+    .feat-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .feat-text {
+      font-size: 0.8rem;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    /* ── GALLERY ─────────────────────────────────────── */
+    .gallery {
+      background: var(--navy-deep);
+      padding: 110px 0 0;
+      overflow: hidden;
+    }
+    .gallery .section-header {
+      padding: 0 64px;
+      margin-bottom: 56px;
+    }
+    .gallery .section-header .section-title { color: #fff; }
+    .gallery-track {
+      display: flex;
+      gap: 4px;
+      padding: 0 64px 80px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      cursor: grab;
+      user-select: none;
+    }
+    .gallery-track::-webkit-scrollbar { display: none; }
+    .gallery-track.grabbing { cursor: grabbing; }
+    .gallery-item {
+      flex: 0 0 400px;
+      height: 280px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      pointer-events: none;
+    }
+    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-label {
+      position: absolute;
+      bottom: 16px;
+      left: 20px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover .gallery-label { opacity: 1; }
+
+    /* ── CONTACT ─────────────────────────────────────── */
+    .contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .contact-copy {
+      background: var(--navy);
+      padding: 110px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .contact-copy .section-title { color: #fff; }
+    .contact-copy .gold-rule { background: var(--gold-warm); }
+    .address-block {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.08rem;
+      line-height: 2;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 40px;
+    }
+    .address-block strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-style: normal;
+      letter-spacing: 2.5px;
+      color: var(--gold-warm);
+      margin-bottom: 6px;
+    }
+    .contact-details { display: flex; flex-direction: column; gap: 14px; }
+    .c-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.55);
+    }
+    .c-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .contact-visual {
+      background: #0d2248;
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .contact-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+    }
+    .contact-visual-inner {
+      position: relative;
+      text-align: center;
+    }
+    .contact-visual-inner img.logo {
+      position: static;
+      width: auto;
+      height: 160px;
+      opacity: 1;
+      object-fit: contain;
+    }
+    .contact-location-text {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 24px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    footer {
+      background: var(--navy-deep);
+      padding: 48px 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer-left {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.22);
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold-warm); }
+    .footer-right {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.22);
+      text-align: right;
+    }
+
+    /* ── FADE-IN OBSERVER ────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .reveal.d1 { transition-delay: 0.12s; }
+    .reveal.d2 { transition-delay: 0.24s; }
+    .reveal.d3 { transition-delay: 0.36s; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 960px) {
+      nav { padding: 18px 28px; }
+      nav.scrolled { padding: 12px 28px; }
+      .nav-links { display: none; }
+      .about { grid-template-columns: 1fr; }
+      .about-img { height: 55vw; }
+      .about-copy { padding: 60px 32px; }
+      .rooms { padding: 80px 24px; }
+      .rooms-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: 300px 260px 260px;
+      }
+      .room-card.tall { grid-row: auto; }
+      .amenities { padding: 80px 24px 60px; }
+      .amenity-grid { grid-template-columns: 1fr; }
+      .amenity-card { height: 380px; }
+      .features-bar { grid-template-columns: 1fr 1fr; }
+      .feat { border-bottom: 1px solid rgba(18,48,91,0.12); }
+      .gallery .section-header { padding: 0 28px; }
+      .gallery-track { padding: 0 28px 60px; }
+      .gallery-item { flex: 0 0 300px; height: 220px; }
+      .contact { grid-template-columns: 1fr; }
+      .contact-copy { padding: 70px 32px; }
+      .contact-visual { min-height: 320px; }
+      footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding: 40px 28px;
+      }
+      .footer-right { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <img src="brand_assets/siamton_logo_v2_transparent.png" alt="Siamton Inn">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#rooms">Rooms</a></li>
+    <li><a href="#amenities">Amenities</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Kolkata &middot; City of Joy</p>
+    <h1 class="hero-title">SIAMTON<br>INN</h1>
+    <div class="hero-rule"></div>
+    <p class="hero-subtitle">Where Heritage Meets Refined Hospitality</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Discover</span>
+  </div>
+</section>
+
+<!-- ── ABOUT ─────────────────────────────────────────── -->
+<section class="about" id="about">
+  <div class="about-img reveal">
+    <img src="brand_assets/photo 4.jpg" alt="Executive Suite at Siamton Inn">
+  </div>
+  <div class="about-copy">
+    <span class="eyebrow reveal">Our Story</span>
+    <h2 class="section-title reveal d1">A Landmark<br>of Kolkata</h2>
+    <div class="gold-rule reveal d2"></div>
+    <p class="body-text reveal d2">
+      Nestled on the legendary Park Street in the heart of Kolkata, Siamton Inn is a sanctuary of warmth, elegance, and genuine Bengali hospitality. We marry the timeless heritage of the City of Joy with the refined comforts of modern living.
+    </p>
+    <p class="body-text reveal d3" style="margin-top: 20px; color: rgba(255,255,255,0.55);">
+      Every corner whispers stories of this city — its culture, its history, its soul. Whether here for business or leisure, Siamton Inn promises an experience that feels personal, polished, and deeply Kolkata.
+    </p>
+    <div class="about-stats reveal d3">
+      <div>
+        <div class="stat-num">34</div>
+        <div class="stat-label">Park Street</div>
+      </div>
+      <div>
+        <div class="stat-num">4★</div>
+        <div class="stat-label">Star Property</div>
+      </div>
+      <div>
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Concierge</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ROOMS ─────────────────────────────────────────── -->
+<section class="rooms" id="rooms">
+  <div class="section-header">
+    <span class="eyebrow reveal">Accommodations</span>
+    <h2 class="section-title reveal d1">Rooms &amp; Suites</h2>
+    <div class="gold-rule center reveal d2"></div>
+    <p class="body-text reveal d2">Each room is a curated space of comfort — warm tones, thoughtful details, and the quiet luxury of home.</p>
+  </div>
+  <div class="rooms-grid reveal">
+    <div class="room-card tall">
+      <img src="brand_assets/photo 1.jpg" alt="Deluxe Room">
+      <div class="room-card-overlay"></div>
+      <div class="room-card-info">
+        <div class="room-name">Deluxe Room</div>
+        <div class="room-desc">Signature amber warmth, hardwood floors &amp; bespoke lighting</div>
+      </div>
+    </div>
+    <div class="room-card">
+      <img src="brand_assets/photo 4.jpg" alt="Executive Suite">
+      <div class="room-card-overlay"></div>
+      <div class="room-card-info">
+        <div class="room-name">Executive Suite</div>
+        <div class="room-desc">Spacious living area with a private bedroom</div>
+      </div>
+    </div>
+    <div class="room-card">
+      <img src="brand_assets/photo 3.jpg" alt="Premium Bathroom">
+      <div class="room-card-overlay"></div>
+      <div class="room-card-info">
+        <div class="room-name">Premium Bath</div>
+        <div class="room-desc">Soaking tub, rainfall shower &amp; marble finishes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AMENITIES ──────────────────────────────────────── -->
+<section class="amenities" id="amenities">
+  <div class="section-header">
+    <span class="eyebrow reveal">Experiences</span>
+    <h2 class="section-title reveal d1">Hotel Amenities</h2>
+    <div class="gold-rule center reveal d2"></div>
+    <p class="body-text reveal d2">From celebrated dining to invigorating fitness — every amenity is designed around your well-being.</p>
+  </div>
+  <div class="amenity-grid reveal">
+    <div class="amenity-card">
+      <img src="brand_assets/photo 6.jpg" alt="The Restaurant">
+      <div class="amenity-overlay"></div>
+      <div class="amenity-content">
+        <div class="amenity-line"></div>
+        <div class="amenity-name">The Restaurant</div>
+        <div class="amenity-desc">An all-day dining experience celebrating the flavours of Bengal and beyond, served in a refined setting.</div>
+      </div>
+    </div>
+    <div class="amenity-card">
+      <img src="brand_assets/photo 5.jpg" alt="Fitness Centre">
+      <div class="amenity-overlay"></div>
+      <div class="amenity-content">
+        <div class="amenity-line"></div>
+        <div class="amenity-name">Fitness Centre</div>
+        <div class="amenity-desc">A fully equipped gymnasium with modern cardio and strength training equipment, open around the clock.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-bar reveal">
+    <div class="feat">
+      <div class="feat-dot"></div>
+      <div class="feat-title">High-Speed Wi-Fi</div>
+      <div class="feat-text">Seamless connectivity throughout the property</div>
+    </div>
+    <div class="feat">
+      <div class="feat-dot"></div>
+      <div class="feat-title">Room Service</div>
+      <div class="feat-text">24-hour in-room dining on request</div>
+    </div>
+    <div class="feat">
+      <div class="feat-dot"></div>
+      <div class="feat-title">Concierge</div>
+      <div class="feat-text">Personal assistance for tours &amp; reservations</div>
+    </div>
+    <div class="feat">
+      <div class="feat-dot"></div>
+      <div class="feat-title">Airport Transfer</div>
+      <div class="feat-text">Comfortable transfers arranged on request</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GALLERY ────────────────────────────────────────── -->
+<section class="gallery" id="gallery">
+  <div class="section-header">
+    <span class="eyebrow reveal">A Visual Journey</span>
+    <h2 class="section-title reveal d1">The Siamton Experience</h2>
+    <div class="gold-rule center reveal d2"></div>
+  </div>
+  <div class="gallery-track" id="galleryTrack">
+    <div class="gallery-item"><img src="brand_assets/photo 7.jpg" alt="Lobby"><span class="gallery-label">The Lobby</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 1.jpg" alt="Deluxe Room"><span class="gallery-label">Deluxe Room</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 6.jpg" alt="Restaurant"><span class="gallery-label">The Restaurant</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 4.jpg" alt="Executive Suite"><span class="gallery-label">Executive Suite</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 2.jpg" alt="Bathroom"><span class="gallery-label">En Suite Bath</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 5.jpg" alt="Fitness Centre"><span class="gallery-label">Fitness Centre</span></div>
+    <div class="gallery-item"><img src="brand_assets/photo 3.jpg" alt="Premium Bath"><span class="gallery-label">Premium Bath</span></div>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────────── -->
+<section class="contact" id="contact">
+  <div class="contact-copy">
+    <span class="eyebrow reveal">Find Us</span>
+    <h2 class="section-title reveal d1">Visit Siamton Inn</h2>
+    <div class="gold-rule reveal d2"></div>
+    <div class="address-block reveal d2">
+      <strong>Address</strong>
+      34 Park Street<br>
+      Kolkata &mdash; 700 017<br>
+      West Bengal, India
+    </div>
+    <div class="contact-details reveal d3">
+      <div class="c-row"><div class="c-dot"></div><span>+91 33 4020 7373</span></div>
+      <div class="c-row"><div class="c-dot"></div><span>reservations@siamtoninn.com</span></div>
+      <div class="c-row"><div class="c-dot"></div><span>Check-in 12:00 noon &nbsp;&middot;&nbsp; Check-out 11:00 AM</span></div>
+    </div>
+  </div>
+  <div class="contact-visual">
+    <img src="brand_assets/photo 7.jpg" alt="Lobby">
+    <div class="contact-visual-inner">
+      <img class="logo" src="brand_assets/siamton_logo_v2_transparent.png" alt="Siamton Inn">
+      <div class="contact-location-text">34 Park Street &middot; Kolkata</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-left">&copy; 2025 Siamton Inn. All rights reserved.</div>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#rooms">Rooms</a></li>
+    <li><a href="#amenities">Amenities</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="footer-right">
+    34 Park Street, Kolkata 700017<br>
+    West Bengal &middot; India
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Hero parallax trigger
+  window.addEventListener('load', () => {
+    document.getElementById('hero').classList.add('loaded');
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Gallery drag-to-scroll
+  const track = document.getElementById('galleryTrack');
+  let isDragging = false, startX, scrollStart;
+  track.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.pageX - track.offsetLeft;
+    scrollStart = track.scrollLeft;
+    track.classList.add('grabbing');
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    track.classList.remove('grabbing');
+  });
+  track.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - track.offsetLeft;
+    track.scrollLeft = scrollStart - (x - startX) * 1.4;
+  });
+</script>
+
+</body>
+</html>
