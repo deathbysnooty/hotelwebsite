@@ -532,9 +532,11 @@
     .contact-visual-inner img.logo {
       position: static;
       width: auto;
-      height: 160px;
+      height: 80px;
       opacity: 1;
       object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
     .contact-location-text {
       font-family: 'Jost', sans-serif;
@@ -687,7 +689,7 @@
       .gallery-item { flex: 0 0 240px; height: 180px; }
       .contact-copy { padding: 56px 24px; }
       .contact-visual { min-height: 260px; }
-      .contact-visual-inner img.logo { height: 110px; }
+      .contact-visual-inner img.logo { height: 64px; }
       footer { padding: 36px 20px; }
       .footer-links { flex-wrap: wrap; justify-content: center; gap: 20px; }
     }
