@@ -46,7 +46,7 @@
       box-shadow: 0 1px 40px rgba(0,0,0,0.3);
     }
     .nav-logo img {
-      height: 52px;
+      height: 70px;
       display: block;
     }
     .nav-links {
@@ -591,14 +591,60 @@
     .reveal.d3 { transition-delay: 0.36s; }
     .reveal.visible { opacity: 1; transform: none; }
 
-    /* ── RESPONSIVE ──────────────────────────────────── */
+    /* ── HAMBURGER ───────────────────────────────────── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.85);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 30, 58, 0.98);
+      backdrop-filter: blur(16px);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--gold-warm); }
+
+    /* ── RESPONSIVE 960px ────────────────────────────── */
     @media (max-width: 960px) {
       nav { padding: 18px 28px; }
       nav.scrolled { padding: 12px 28px; }
       .nav-links { display: none; }
+      .hamburger { display: flex; }
       .about { grid-template-columns: 1fr; }
       .about-img { height: 55vw; }
       .about-copy { padding: 60px 32px; }
+      .about-stats { gap: 28px; }
       .rooms { padding: 80px 24px; }
       .rooms-grid {
         grid-template-columns: 1fr;
@@ -624,6 +670,27 @@
       }
       .footer-right { text-align: center; }
     }
+
+    /* ── RESPONSIVE 480px ────────────────────────────── */
+    @media (max-width: 480px) {
+      .hero-title { letter-spacing: 6px; }
+      .about-img { height: 65vw; }
+      .about-copy { padding: 48px 24px; }
+      .about-stats { flex-direction: column; gap: 24px; }
+      .rooms { padding: 64px 16px; }
+      .rooms-grid { grid-template-rows: 260px 220px 220px; }
+      .amenities { padding: 64px 16px 48px; }
+      .amenity-card { height: 300px; }
+      .amenity-content { padding: 32px 28px; }
+      .features-bar { grid-template-columns: 1fr; }
+      .feat { border-right: none; }
+      .gallery-item { flex: 0 0 240px; height: 180px; }
+      .contact-copy { padding: 56px 24px; }
+      .contact-visual { min-height: 260px; }
+      .contact-visual-inner img.logo { height: 110px; }
+      footer { padding: 36px 20px; }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -640,7 +707,18 @@
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about"      onclick="closeMobileMenu()">About</a>
+  <a href="#rooms"      onclick="closeMobileMenu()">Rooms</a>
+  <a href="#amenities"  onclick="closeMobileMenu()">Amenities</a>
+  <a href="#gallery"    onclick="closeMobileMenu()">Gallery</a>
+  <a href="#contact"    onclick="closeMobileMenu()">Contact</a>
+</div>
 
 <!-- ── HERO ─────────────────────────────────────────── -->
 <section class="hero" id="hero">
@@ -675,7 +753,7 @@
     </p>
     <div class="about-stats reveal d3">
       <div>
-        <div class="stat-num">34</div>
+        <div class="stat-num">56</div>
         <div class="stat-label">Park Street</div>
       </div>
       <div>
@@ -805,13 +883,13 @@
     <div class="gold-rule reveal d2"></div>
     <div class="address-block reveal d2">
       <strong>Address</strong>
-      34 Park Street<br>
+      56, Park Street<br>
       Kolkata &mdash; 700 017<br>
       West Bengal, India
     </div>
     <div class="contact-details reveal d3">
-      <div class="c-row"><div class="c-dot"></div><span>+91 33 4020 7373</span></div>
-      <div class="c-row"><div class="c-dot"></div><span>reservations@siamtoninn.com</span></div>
+      <div class="c-row"><div class="c-dot"></div><span>033 - 40250000</span></div>
+      <div class="c-row"><div class="c-dot"></div><span>reservations@siamtom.com</span></div>
       <div class="c-row"><div class="c-dot"></div><span>Check-in 12:00 noon &nbsp;&middot;&nbsp; Check-out 11:00 AM</span></div>
     </div>
   </div>
@@ -835,12 +913,26 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="footer-right">
-    34 Park Street, Kolkata 700017<br>
+    56, Park Street, Kolkata 700017<br>
     West Bengal &middot; India
   </div>
 </footer>
 
 <script>
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  function closeMobileMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
   // Navbar scroll
   const nav = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
